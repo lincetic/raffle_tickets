@@ -1,0 +1,34 @@
+# ===============================
+# Archivos generados por la app
+# ===============================
+*.pdf
+*.csv
+
+# ===============================
+# Python
+# ===============================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Paquetes compilados
+*.so
+
+# Directorios de build
+build/
+dist/
+*.egg-info/
+
+# ===============================
+# Entornos virtuales
+# ===============================
+/env
+venv/
+.venv/
+
+# ===============================
+# Configuración / entorno
+# ===============================
+.env
+*.env

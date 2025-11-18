@@ -1,0 +1,27 @@
+[tool.black]
+line-length = 88
+
+[tool.isort]
+profile = "black"
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "raffle-tickets"
+version = "0.1.0"
+description = "Generador de papeletas para sorteos navideños"
+authors = [{ name = "Eddie Rapallo", email = "eddie@lincetic.es" }]
+requires-python = ">=3.10"
+dependencies = [
+    "reportlab",
+    "qrcode",
+    "Pillow"
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[project.scripts]
+raffle-tickets = "raffle_tickets.cli:main"

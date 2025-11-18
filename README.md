@@ -1,66 +1,87 @@
-🎟️ Raffle Tickets Generator
+# 🎟️ Raffle Tickets Generator
 
 Generador de papeletas de sorteo (tipo Lotería de Navidad) con soporte para:
 
-✔ Generar papeletas automáticas a partir del número de cifras
-✔ Importar participantes desde CSV (nombre, numero)
-✔ Incluir logo, imagen de cesta y QR codes de verificación
-✔ Papeletas recortables con zona para organización y zona para el participante
-✔ Diseño compatible con impresión en A4 (vertical u horizontal)
-✔ Totalmente ejecutable vía CLI
+- ✔ Generar papeletas automáticas a partir del número de cifras  
+- ✔ Importar participantes desde CSV (nombre, número)  
+- ✔ Incluir logo, imagen de cesta y QR codes de verificación  
+- ✔ Papeletas recortables con zona para organización y zona para el participante  
+- ✔ Diseño compatible con impresión en A4 (vertical u horizontal)  
+- ✔ Totalmente ejecutable vía CLI  
 
-📦 Instalación
+---
 
-Clona el repositorio:
+## 📦 Instalación
 
-git clone https://github.com/lincetic/raffle-tickets.git
-cd raffle-tickets
+### 1. Clona el repositorio
 
+```bash
+git clone https://github.com/lincetic/raffle_tickets.git
+cd raffle_tickets
+```
 
-Crea un entorno virtual (opcional pero recomendado):
+### 2. Crea un entorno virtual (opcional pero recomendado)
 
+```bash
 python -m venv venv
 source venv/bin/activate   # Linux / macOS
 venv\Scripts\activate      # Windows
+```
 
+### 3. Instala las dependencias
 
-Instala dependencias:
-
+```bash
 pip install -r requirements.txt
+```
 
-🚀 Uso desde la línea de comandos (CLI)
+---
 
-Ejemplo básico:
+## 🚀 Uso desde la línea de comandos (CLI)
 
+### Ejemplo básico
+
+```bash
 python -m raffle_tickets --digits 3
+```
 
+Genera **000–999** (1000 tickets) y los exporta a `tickets.pdf`.
 
-Genera 000-999 (1000 tickets) y los exporta a tickets.pdf.
+---
 
-📥 1. Con CSV de participantes
+## 📥 Uso con CSV de participantes
 
-Formato obligatorio:
+### Formato obligatorio
 
-nombre	numero
-Juan Pérez	25
-Marta López	007
+```csv
+nombre,numero
+Juan Pérez,25
+Marta López,007
+```
 
-El número se rellenará automáticamente (zfill) según las cifras del sorteo.
+El número se rellenará automáticamente (`zfill`) según las cifras del sorteo.
 
-Ejemplo:
+### Ejemplo
 
+```bash
 python -m raffle_tickets --input participantes.csv --digits 3
+```
 
-🔧 2. Otros argumentos
-Parámetro	Descripción
---digits N	Cifras del número del sorteo (1–4)
---logo logo.png	Imagen para el logo (opcional)
---basket cesta.png	Imagen de cesta de Navidad (opcional)
---out salida.pdf	Nombre del PDF final
---orientation A4 / landscape	Orientación de la página
+---
 
-Ejemplo completo:
+## 🔧 Argumentos disponibles
 
+| Parámetro | Descripción |
+|----------|-------------|
+| `--digits N` | Cifras del número del sorteo (1–4) |
+| `--input archivo.csv` | CSV con nombre y número |
+| `--logo logo.png` | Imagen opcional para el logo |
+| `--basket cesta.png` | Imagen opcional para la cesta |
+| `--out salida.pdf` | Nombre del PDF final |
+| `--orientation A4 / landscape` | Orientación del documento |
+
+### Ejemplo completo
+
+```bash
 python -m raffle_tickets \
    --input participantes.csv \
    --digits 3 \
@@ -68,146 +89,128 @@ python -m raffle_tickets \
    --basket basket.png \
    --out navidad2025.pdf \
    --orientation landscape
+```
 
-📄 Funcionamiento interno
-1. read_participants()
+---
 
-Lee un CSV con las columnas:
+## 📄 Funcionamiento interno
 
-nombre
+### 1. `read_participants()`
 
-numero
+- Lee un CSV con columnas `nombre` y `numero`
+- Detecta delimitador con `csv.Sniffer`
+- Maneja archivos con BOM (`utf-8-sig`)
+- Ignora filas inválidas
 
-Corrige BOM (utf-8-sig), detecta separadores con csv.Sniffer e ignora filas vacías.
+Ejemplo de retorno:
 
-Devuelve:
-
+```
 [("025", "Juan Pérez"), ("007", "Ana García"), ...]
+```
 
-2. generate_tickets_from_digits()
+---
 
-Genera TODOS los números posibles de:
+### 2. `generate_tickets_from_digits()`
 
-1 cifra → 0–9
+Genera todos los números posibles:
 
-2 cifras → 00–99
+- 1 cifra → 0–9  
+- 2 cifras → 00–99  
+- 3 cifras → 000–999  
+- 4 cifras → 0000–9999  
 
-3 cifras → 000–999
+---
 
-4 cifras → 0000–9999
+### 3. `render_tickets_pdf()`
 
-Devuelve:
+Construye el PDF:
 
-[("000", None), ("001", None), ..., ("999", None)]
+- Diseño A4 o apaisado  
+- Cálculo automático de cuántos tickets caben por página  
+- Línea punteada de corte  
+- Logo escalado  
+- Cesta escalada  
+- Texto multilínea  
+- QR codes  
+- Fecha automática  
 
-3. render_tickets_pdf()
+---
 
-Crea un PDF con:
+### 4. `draw_ticket()`
 
-Diseño A4 o apaisado
+Dibuja cada papeleta:
 
-Cálculo dinámico del número de tickets por página
+- Marco del ticket  
+- Línea vertical punteada  
+- Logo arriba y abajo  
+- Cesta a la derecha  
+- Título y descripción  
+- Número `#XYZ`  
+- Nombre del participante rotado 90º  
+- Dos QR con payload:  
 
-Corte vertical punteado
-
-Logo escalado por altura fija
-
-Imagen de cesta escalada por altura fija
-
-Texto multilínea
-
-Nombre del participante en vertical
-
-Dos QR codes por papeleta
-
-Fecha automática del sorteo
-
-4. draw_ticket()
-
-Dibuja cada entrada:
-
-Marco del ticket
-
-Línea punteada de separación
-
-Logo arriba y abajo
-
-Cesta en la esquina
-
-Título
-
-Descripción multilínea
-
-Número #XYZ
-
-Nombre del participante rotado 90°
-
-Dos QR con payload:
-
+```
 ?{ticket_id} - {key_secret}
+```
 
-5. add_image()
+---
 
-Carga y escala imágenes según altura en centímetros, manteniendo proporciones usando DPI reales o por defecto (72).
+### 5. `add_image()`
 
-6. make_qr_image()
+Carga y escala imágenes manteniendo proporciones según altura en cm.
 
-Genera un QR cuadrado usando qrcode y lo devuelve como ImageReader.
+---
 
-🧪 Tests incluidos
+### 6. `make_qr_image()`
+
+Genera un QR utilizando la librería `qrcode`.
+
+---
+
+## 🧪 Tests incluidos
+
+```
 tests/
-.
 ├── test_digits_generator.py
 ├── test_cli.py
-├── test_cesv_reader.py
+├── test_csv_reader.py
 ├── test_pdf_renderer.py
+```
 
-📄 Ejemplo de salida (estructura del PDF)
+---
 
-Cada hoja incluye:
+## 📂 Estructura del proyecto
 
-6 papeletas en horizontal (o las que quepan)
-
-Zona de corte
-
-Logo arriba y abajo
-
-Cesta a la derecha
-
-Texto multilínea
-
-QR en dos partes
-
-Información del sorteo
-
-📂 Estructura del proyecto
+```
 raffle_tickets/
-.
 ├── .gitignore
 ├── README.md
 ├── pyproject.toml
 ├── requirements.txt
 ├── pytest.ini
 │
-├── logo.png                 # Imagen opcional para el logo
-├── basket.png               # Imagen opcional de la cesta
-├── participantes.csv        # Ejemplo de archivo de entrada
-├── tickets.pdf              # Ejemplo de PDF generado
+├── logo.png
+├── basket.png
+├── participantes.csv
+├── tickets.pdf
 │
-├── docs/                    # Documentación adicional
+├── docs/
 │
 ├── src/
 │   └── raffle_tickets/
 │       ├── __init__.py
-│       ├── cli.py           # Entrada CLI
-│       ├── generator.py     # Lectura CSV y lógica del sorteo
-│       ├── pdf_renderer.py  # Creación del PDF
-│       └── ...              # Otros módulos si los añades
+│       ├── cli.py
+│       ├── generator.py
+│       ├── pdf_renderer.py
+│       └── ...
 │
 └── tests/
     ├── test_digits_generator.py
-    ├── ...                  # Más tests
+    └── ...
+```
 
-📜 Licencia
+---
 
-MIT — úsalo libremente en cualquier proyecto.
+## 📜 Licencia
+
+**MIT License** — libre para usar, modificar y distribuir.

@@ -28,7 +28,15 @@ source venv/bin/activate   # Linux / macOS
 venv\Scripts\activate      # Windows
 ```
 
-### 3. Instala las dependencias
+### 3. Instala el paquete
+
+**Opción A: Instalación en modo desarrollo (recomendado para desarrollo)**
+
+```bash
+pip install -e .
+```
+
+**Opción B: Instalación desde archivo de requisitos**
 
 ```bash
 pip install -r requirements.txt
@@ -38,13 +46,23 @@ pip install -r requirements.txt
 
 ## 🚀 Uso desde la línea de comandos (CLI)
 
-### Ejemplo básico
+### Como comando ejecutable (después de instalar con `pip install -e .`)
+
+Una vez instalado el paquete en modo desarrollo, puedes usar el comando `raffle-tickets` directamente:
+
+```bash
+raffle-tickets --digits 3
+```
+
+Genera **000–999** (1000 tickets) y los exporta a `tickets.pdf`.
+
+### Alternativa: Usando `python -m`
+
+También puedes ejecutar el módulo directamente sin necesidad de instalación:
 
 ```bash
 python -m raffle_tickets --digits 3
 ```
-
-Genera **000–999** (1000 tickets) y los exporta a `tickets.pdf`.
 
 ---
 
@@ -63,6 +81,12 @@ El número se rellenará automáticamente (`zfill`) según las cifras del sorteo
 ### Ejemplo
 
 ```bash
+raffle-tickets --input participantes.csv --digits 3
+```
+
+O usando `python -m`:
+
+```bash
 python -m raffle_tickets --input participantes.csv --digits 3
 ```
 
@@ -79,10 +103,10 @@ python -m raffle_tickets --input participantes.csv --digits 3
 | `--out salida.pdf` | Nombre del PDF final |
 | `--orientation A4 / landscape` | Orientación del documento |
 
-### Ejemplo completo
+### Ejemplo completo (con `raffle-tickets`)
 
 ```bash
-python -m raffle_tickets \
+raffle-tickets \
    --input participantes.csv \
    --digits 3 \
    --logo logo.png \
